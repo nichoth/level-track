@@ -8,7 +8,8 @@ var expected = [
     { type: 'put', key: 'gorilla', value: { n: 6 } },
     { type: 'put', key: 'hack', value: { n: 2 } },
     { type: 'put', key: 'p', value: { n: 11 } },
-    { type: 'put', key: 'f', value: { n: 2 } }
+    { type: 'put', key: 'f', value: { n: 2 } },
+    { type: 'put', key: 'c', value: { n: 333 } }
 ];
 
 test('put keys', function (t) {
@@ -30,7 +31,8 @@ test('put keys', function (t) {
         { type: 'put', key: 'queen', value: { n: 50 } },
         { type: 'put', key: 'p', value: { n: 11 } },
         { type: 'put', key: 'f', value: { n: 2 } },
-        { type: 'put', key: 'xylophone', value: { n: 555 } }
+        { type: 'put', key: 'xylophone', value: { n: 555 } },
+        { type: 'put', key: 'c', value: { n: 333 } }
     ]);
     
     t.on('end', function () { tr.end() });
