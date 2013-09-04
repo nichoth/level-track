@@ -14,7 +14,7 @@ var expected = [
 
 test('put keys', function (t) {
     t.plan(expected.length * 2);
-    var tr = tracker();
+    var tr = tracker({ objectMode: true });
     tr.pipe(through(function (row) {
         t.ok(row.key >= 'f' && row.key <= 'p' || row.key === 'c');
         t.deepEqual(row, expected.shift());

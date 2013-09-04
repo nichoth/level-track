@@ -32,7 +32,7 @@ test('setup', function (t) {
  
 test('range with since', function (t) {
     t.plan(expected.length * 2);
-    var tr = tracker();
+    var tr = tracker({ objectMode: true });
     tr.pipe(through(function (row) {
         t.ok(row.key >= 'a' && row.key <= 'j');
         t.deepEqual(row, expected.shift());

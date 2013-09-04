@@ -4,9 +4,7 @@ var tracker = require('../')(db);
 var through = require('through');
 
 var t = tracker();
-t.pipe(through(function (row) {
-    console.log(row);
-}));
+t.pipe(process.stdout);
 
 t.write('"c"\n');
 t.write('["f","p"]\n');

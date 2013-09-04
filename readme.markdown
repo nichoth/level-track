@@ -15,9 +15,7 @@ var tracker = require('level-track')(db);
 var through = require('through');
 
 var t = tracker();
-t.pipe(through(function (row) {
-    console.log(row);
-}));
+t.pipe(process.stdout);
 
 t.write('"c"\n');
 t.write('["f","p"]\n');
@@ -35,22 +33,36 @@ setInterval(function () {
 output:
 
 ```
-{ type: 'put', key: 'hn', value: { n: 30 } }
-{ type: 'put', key: 'ft', value: { n: 65 } }
-{ type: 'put', key: 'ij', value: { n: 49 } }
-{ type: 'put', key: 'o', value: { n: 77 } }
-{ type: 'put', key: 'g', value: { n: 18 } }
-{ type: 'put', key: 'c', value: { n: 9 } }
-{ type: 'put', key: 'iz', value: { n: 58 } }
-{ type: 'put', key: 'n', value: { n: 60 } }
-{ type: 'put', key: 'l', value: { n: 78 } }
-{ type: 'put', key: 'h', value: { n: 0 } }
-{ type: 'put', key: 'p', value: { n: 88 } }
-{ type: 'put', key: 'nl', value: { n: 45 } }
-{ type: 'put', key: 'i', value: { n: 80 } }
-{ type: 'put', key: 'c', value: { n: 63 } }
-{ type: 'put', key: 'mr', value: { n: 10 } }
-{ type: 'put', key: 'c', value: { n: 71 } }
+{"type":"put","key":"jr","value":{"n":92}}
+{"type":"put","key":"ft","value":{"n":41}}
+{"type":"put","key":"g","value":{"n":32}}
+{"type":"put","key":"l","value":{"n":55}}
+{"type":"put","key":"kh","value":{"n":60}}
+{"type":"put","key":"m","value":{"n":43}}
+{"type":"put","key":"p","value":{"n":40}}
+{"type":"put","key":"nc","value":{"n":64}}
+{"type":"put","key":"l","value":{"n":70}}
+{"type":"put","key":"fy","value":{"n":41}}
+{"type":"put","key":"kp","value":{"n":98}}
+{"type":"put","key":"mk","value":{"n":48}}
+{"type":"put","key":"h","value":{"n":27}}
+^C
 ```
 
+# protocol
 
+The tracking protocol is newline-delimited json.
+Each line should match one of these formats:
+
+## "key"\n
+
+Receive updates from a single key.
+
+## ["startkey","endkey"]
+
+## ["startkey","endkey","sincekey"]
+
+# methods
+
+``` js
+```

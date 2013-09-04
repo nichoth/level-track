@@ -8,22 +8,26 @@ module.exports = function (db) {
     db.hooks.post({ start: '', end: '~' }, function (change) {
         if (trackingKeys[change.key]) {
             trackingKeys[change.key].forEach(function (stream) {
-                stream.queue(change);
+                if (stream._objectMode) stream.queue(change)
+                else stream.queue(JSON.stringify(change) + '\n')
             });
         }
         for (var i = 0, l = trackingRange.length; i < l; i++) {
             // todo: binary search for start and end keys
             var r = trackingRange[i];
             if (change.key >= r.start && change.key <= r.end) {
-                r.stream.queue(change);
+                if (r.stream._objectMode) r.stream.queue(change)
+                else r.stream.queue(JSON.stringify(change) + '\n')
             }
         }
     });
     
-    return function () {
+    return function (opts) {
+        if (!opts) opts = {};
         var localKeys = [];
         var localRange = [];
         var output = through(write, end);
+        output._objectMode = opts.objectMode;
         return combine(split(), output);
         
         function write (line) {
@@ -38,10 +42,11 @@ module.exports = function (db) {
             else if (Array.isArray(row)) {
                 var ref = { start: row[0], end: row[1], stream: output };
                 if (row.length >= 3) {
-                    var opts = { start: row[2] + '\x00', end: row[1] };
-                    db.createReadStream(opts)
+                    var params = { start: row[2] + '\x00', end: row[1] };
+                    db.createReadStream(params)
                         .pipe(through(function (row) {
-                            output.queue(row);
+                            if (opts.objectMode) output.queue(row)
+                            else output.queue(JSON.stringify(row) + '\n');
                         }))
                     ;
                     
