@@ -42,6 +42,7 @@ module.exports = function (db) {
             else if (Array.isArray(row)) {
                 var ref = { start: row[0], end: row[1], stream: output };
                 if (row.length >= 3) {
+                    ref.since = row[2];
                     var params = { start: row[2] + '\x00', end: row[1] };
                     db.createReadStream(params)
                         .pipe(through(function (row) {
@@ -49,29 +50,46 @@ module.exports = function (db) {
                             else output.queue(JSON.stringify(row) + '\n');
                         }))
                     ;
-                    
                 }
                 trackingRange.push(ref);
                 localRange.push(ref);
             }
-            else if (row && typeof row === 'object' && row.rm) {
-                // TODO: removing subscriptions
+            else if (row && typeof row === 'object' && row.rm
+            && typeof row.rm === 'string') {
+                removeKey(row.rm);
+            }
+            else if (row && typeof row === 'object' && row.rm
+            && Array.isArray(row.rm)) {
+                removeRange(findRange(row.rm));
             }
         }
         
         function end () {
-            localKeys.forEach(function (key) {
-                var xs = trackingKeys[key];
-                if (!xs) return;
-                var ix = xs.indexOf(output);
-                if (ix >= 0) xs.splice(ix, 1);
-                if (ix.length === 0) delete trackingKeys[key];
-            });
-            localRange.forEach(function (r) {
-                var ix = trackingRange.indexOf(r);
-                if (ix >= 0) trackingRange.splice(ix, 1);
-            });
+            localKeys.forEach(removeKey);
+            localRange.forEach(removeRange);
             output.queue(null);
+        }
+        
+        function removeKey (key) {
+            var xs = trackingKeys[key];
+            if (!xs) return;
+            var ix = xs.indexOf(output);
+            if (ix >= 0) xs.splice(ix, 1);
+            if (ix.length === 0) delete trackingKeys[key];
+        }
+        
+        function removeRange (r) {
+            var ix = trackingRange.indexOf(r);
+            if (ix >= 0) trackingRange.splice(ix, 1);
+        }
+        
+        function findRange (rf) {
+            for (var i = 0; i < trackingRange.length; i++) {
+                var r = trackingRange[i];
+                if (rf[0] == r.start && rf[1] === r.end && rf[2] === r.since) {
+                    return r;
+                }
+            }
         }
     };
 };
