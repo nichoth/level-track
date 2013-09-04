@@ -11,7 +11,7 @@ module.exports = function (db) {
                 stream.queue(change);
             });
         }
-        for (var i = 0, l = trackingRange; i < l; i++) {
+        for (var i = 0, l = trackingRange.length; i < l; i++) {
             // todo: binary search for start and end keys
             var r = trackingRange[i];
             if (change.key >= r.start && change.key <= r.end) {
@@ -26,18 +26,22 @@ module.exports = function (db) {
         var output = through(write, end);
         return combine(split(), output);
         
-        function write (buf) {
-            var line = typeof line === 'string' ? line : buf.toString('utf8');
-            if (/^[A-Fa-f0-9]+$/.test(line)) {
-                localKeys.push(line);
-                if (!trackingKeys[line]) trackingKeys[line] = [];
-                trackingKeys[line].push(output);
+        function write (line) {
+            try { var row = JSON.parse(line) }
+            catch (e) { return }
+            
+            if (typeof row === 'string') {
+                localKeys.push(row);
+                if (!trackingKeys[row]) trackingKeys[row] = [];
+                trackingKeys[row].push(output);
             }
-            else if (/^[A-Fa-f0-9]+-[A-Fa-f0-9]+$/.test(line)) {
-                var parts = line.split('-');
-                var ref = { start: parts[0], end: parts[1], stream: output };
+            else if (Array.isArray(row)) {
+                var ref = { start: row[0], end: row[1], stream: output };
                 trackingRange.push(ref);
                 localRange.push(ref);
+            }
+            else if (row && typeof row === 'object' && row.rm) {
+                // TODO: removing subscriptions
             }
         }
         

@@ -8,11 +8,11 @@ t.pipe(through(function (row) {
     console.log(row);
 }));
 
-t.write('c\n');
-t.write('f-p\n');
+t.write('"c"\n');
+t.write('["f","p"]\n');
 
 setInterval(function () {
-    var l = Math.floor(Math.random() * 4) + 1;
+    var l = Math.floor(Math.random() * 2) + 1;
     var key = '';
     for (var i = 0; i < l; i++) {
         key += String.fromCharCode(Math.random() * 26 + 97);
