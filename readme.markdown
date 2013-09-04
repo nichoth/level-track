@@ -36,7 +36,7 @@ output:
 {"type":"put","key":"jr","value":{"n":92}}
 {"type":"put","key":"ft","value":{"n":41}}
 {"type":"put","key":"g","value":{"n":32}}
-{"type":"put","key":"l","value":{"n":55}}
+{"type":"put","key":"c","value":{"n":55}}
 {"type":"put","key":"kh","value":{"n":60}}
 {"type":"put","key":"m","value":{"n":43}}
 {"type":"put","key":"p","value":{"n":40}}
@@ -54,15 +54,52 @@ output:
 The tracking protocol is newline-delimited json.
 Each line should match one of these formats:
 
-## "key"\n
+## "key"
 
 Receive updates from a single key.
 
 ## ["startkey","endkey"]
 
+Receive updates from the range `"startkey"` through `"endkey"`, inclusive.
+
 ## ["startkey","endkey","sincekey"]
+
+Receive updates from the range `"startkey"` through `"endkey"`, inclusive and
+populate the result stream with data from the exclusive `"sincekey"` through
+`"endkey"`.
+
+This form is useful so that no updates slip past due to delays from rendering
+the initial content and establishing a live connection.
 
 # methods
 
 ``` js
+var tracker = require('level-track')
 ```
+
+## var t = tracker(opts)
+
+Return a duplex stream that expects 
+input of the form documented in the protocol section and produces output of the
+form:
+
+``` json
+{"type":"put","key":"h","value":{"n":27}}
+```
+
+which is the same format that `db.hooks` and `db.batch()` use.
+
+When `opts.objectMode` is true, output is written as objects. Otherwise, output
+is written as newline-delimited lines of json.
+
+# install
+
+With [npm](https://npmjs.org) do:
+
+```
+npm install level-tracker
+```
+
+# license
+
+MIT
