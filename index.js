@@ -37,6 +37,15 @@ module.exports = function (db) {
             }
             else if (Array.isArray(row)) {
                 var ref = { start: row[0], end: row[1], stream: output };
+                if (row.length >= 3) {
+                    var opts = { start: row[2] + '\x00', end: row[1] };
+                    db.createReadStream(opts)
+                        .pipe(through(function (row) {
+                            output.queue(row);
+                        }))
+                    ;
+                    
+                }
                 trackingRange.push(ref);
                 localRange.push(ref);
             }

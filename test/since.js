@@ -1,12 +1,13 @@
 var test = require('tape');
 var sub = require('level-sublevel');
-var db = sub(require('level-test')()());
+var level = require('level-test')();
+var db = sub(level('track-since-test', { valueEncoding: 'json' }));
 var tracker = require('../')(db);
 var through = require('through');
 
 var expected = [
-    { type: 'put', key: 'e', value: { n: 14 } },
-    { type: 'put', key: 'f', value: { n: 15 } },
+    { key: 'e', value: { n: 14 } },
+    { key: 'f', value: { n: 15 } },
     { type: 'put', key: 'g', value: { n: 16 } },
     { type: 'put', key: 'h', value: { n: 17 } },
     { type: 'put', key: 'i', value: { n: 18 } },
@@ -33,10 +34,10 @@ test('range with since', function (t) {
     t.plan(expected.length * 2);
     var tr = tracker();
     tr.pipe(through(function (row) {
-        t.ok(row.key >= 'f' && row.key <= 'p' || row.key === 'c');
+        t.ok(row.key >= 'a' && row.key <= 'j');
         t.deepEqual(row, expected.shift());
         
-        if (row.key === 'j') {
+        if (row.key === 'f') {
             db.batch([
                 { type: 'put', key: 'g', value: { n: 16 } },
                 { type: 'put', key: 'h', value: { n: 17 } },
@@ -47,6 +48,7 @@ test('range with since', function (t) {
                 { type: 'put', key: 'm', value: { n: 22 } },
                 { type: 'put', key: 'n', value: { n: 23 } },
                 { type: 'put', key: 'b', value: { n: 101 } },
+                { type: 'put', key: 'w', value: { n: 83 } },
                 { type: 'put', key: 'f', value: { n: 105 } }
             ], function () { t.end() });
         }
