@@ -22,14 +22,16 @@ test('put keys', function (t) {
     tr.write('"c"\n');
     tr.write('["f","p"]\n');
     
-    db.put('abbot', { n: 5 });
-    db.put('potato', { n: 4 });
-    db.put('gorilla', { n: 6 });
-    db.put('hack', { n: 2 });
-    db.put('queen', { n: 50 });
-    db.put('p', { n: 11 });
-    db.put('f', { n: 2 });
-    db.put('xylophone', { value: 555 });
+    db.batch([
+        { type: 'put', key: 'abbot', value: { n: 5 } },
+        { type: 'put', key: 'potato', value: { n: 4 } },
+        { type: 'put', key: 'gorilla', value: { n: 6 } },
+        { type: 'put', key: 'hack', value: { n: 2 } },
+        { type: 'put', key: 'queen', value: { n: 50 } },
+        { type: 'put', key: 'p', value: { n: 11 } },
+        { type: 'put', key: 'f', value: { n: 2 } },
+        { type: 'put', key: 'xylophone', value: { n: 555 } }
+    ]);
     
     t.on('end', function () { tr.end() });
 });
