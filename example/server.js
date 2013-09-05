@@ -7,8 +7,9 @@ var fs = require('fs');
 var http = require('http');
 
 var trumpet = require('trumpet');
-var ecstatic = require('ecstatic')(__dirname + '/server');
+var ecstatic = require('ecstatic')(__dirname + '/server/static');
 var concat = require('concat-stream');
+var render = require('./server/render/message.js');
 
 var server = http.createServer(function (req, res) {
     if (req.method === 'GET' && req.url === '/') {
@@ -16,13 +17,18 @@ var server = http.createServer(function (req, res) {
         
         var counter = tr.createWriteStream('#counter');
         db.get('counter', function (err, value) {
-            counter.end(value);
+            counter.end(value || '0');
+            db.put('counter', (value || 0) + 1);
+        });
+        tr.select('#counter', function (elem) {
+            elem.setAttribute('data-key', 'counter');
         });
         
-        var messages = tr.createWriteStream('#messages');
-        db.createReadStream()
-        
-        readStream('index.html').pipe(tr);
+        db.createReadStream({ start: 'message', end: 'message~' })
+            .pipe(render())
+            .pipe(tr.createWriteStream('#messages'))
+        ;
+        readStream('index.html').pipe(tr).pipe(res);
     }
     else if (req.method === 'POST') {
         req.pipe(concat(function (body) {
@@ -44,5 +50,5 @@ var sock = shoe(function (stream) {
 sock.install(server, '/sock');
 
 function readStream (file) {
-    return fs.createReadStream(__dirname + '/server/' + file);
+    return fs.createReadStream(__dirname + '/server/static/' + file);
 }
