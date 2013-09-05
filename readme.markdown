@@ -2,6 +2,8 @@
 
 keep track of all the active queries from a request to route live updates
 
+[![build status](https://secure.travis-ci.org/substack/level-track.png)](http://travis-ci.org/substack/level-track)
+
 # example
 
 In this example we'll subscribe to the range of keys `"f"` through `"p"` and the
