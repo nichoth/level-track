@@ -7,7 +7,7 @@ var fs = require('fs');
 var http = require('http');
 
 var trumpet = require('trumpet');
-var ecstatic = require('ecstatic')(__dirname + '/server/static');
+var ecstatic = require('ecstatic')(__dirname + '/static');
 var concat = require('concat-stream');
 var render = require('./server/render/message.js');
 
@@ -19,9 +19,6 @@ var server = http.createServer(function (req, res) {
         db.get('counter', function (err, value) {
             counter.end(value || '0');
             db.put('counter', (value || 0) + 1);
-        });
-        tr.select('#counter', function (elem) {
-            elem.setAttribute('data-key', 'counter');
         });
         
         db.createReadStream({ start: 'message', end: 'message~' })
@@ -50,5 +47,5 @@ var sock = shoe(function (stream) {
 sock.install(server, '/sock');
 
 function readStream (file) {
-    return fs.createReadStream(__dirname + '/server/static/' + file);
+    return fs.createReadStream(__dirname + '/static/' + file);
 }
