@@ -1,0 +1,39 @@
+{
+  "name": "level-track",
+  "version": "0.0.0",
+  "description": "receive updates from a set of keys and ranges in leveldb",
+  "main": "index.js",
+  "dependencies": {
+    "split": "~0.2.10",
+    "stream-combiner": "~0.0.2",
+    "through": "~2.3.4"
+  },
+  "devDependencies": {
+    "tape": "~1.0.4",
+    "level-sublevel": "~5.0.1",
+    "level-test": "~1.5.1"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/level-track.git"
+  },
+  "homepage": "https://github.com/substack/level-track",
+  "keywords": [
+    "level",
+    "subscribe",
+    "database",
+    "live",
+    "updating",
+    "range",
+    "query"
+  ],
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "license": "MIT"
+}
