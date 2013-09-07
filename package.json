@@ -1,6 +1,6 @@
 {
   "name": "level-track",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "receive updates from a set of keys and ranges in leveldb",
   "main": "index.js",
   "dependencies": {

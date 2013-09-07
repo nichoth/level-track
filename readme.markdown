@@ -94,6 +94,9 @@ which is the same format that `db.hooks` and `db.batch()` use.
 When `opts.objectMode` is true, output is written as objects. Otherwise, output
 is written as newline-delimited lines of json.
 
+You may also specify an optional `opts.keyMap(key)` function to pre-transform
+keys. Return the value you want to use for the key.
+
 # install
 
 With [npm](https://npmjs.org) do:

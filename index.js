@@ -24,6 +24,8 @@ module.exports = function (db) {
     
     return function (opts) {
         if (!opts) opts = {};
+        var keyMap = opts.keyMap || function (x) { return x };
+        
         var localKeys = [];
         var localRange = [];
         var output = through(write, end);
@@ -40,10 +42,14 @@ module.exports = function (db) {
                 trackingKeys[row].push(output);
             }
             else if (Array.isArray(row)) {
-                var ref = { start: row[0], end: row[1], stream: output };
+                var ref = {
+                    start: keyMap(row[0]),
+                    end: keyMap(row[1]),
+                    stream: output
+                };
                 if (row.length >= 3) {
-                    ref.since = row[2];
-                    var params = { start: row[2] + '\x00', end: row[1] };
+                    ref.since = keyMap(row[2]);
+                    var params = { start: ref.since + '\x00', end: ref.end };
                     db.createReadStream(params)
                         .pipe(through(function (row) {
                             if (opts.objectMode) output.queue(row)
