@@ -1,8 +1,10 @@
 var through = require('through');
 var combine = require('stream-combiner');
 var split = require('split');
+var hooks = require('level-hooks');
 
 module.exports = function (db) {
+    hooks(db);
     var trackingKeys = {};
     var trackingRange = [];
     db.hooks.post({ start: '', end: '~' }, function (change) {

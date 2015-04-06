@@ -1,6 +1,5 @@
 var test = require('tape');
-var sub = require('level-sublevel');
-var db = sub(require('level-test')()());
+var db = require('level-test')()();
 var tracker = require('../')(db);
 var through = require('through');
 
